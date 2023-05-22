@@ -15,14 +15,7 @@ services:
     environment:
       TRAEFIK_URL: ${TRAEFIK_URL}
       CERTSOLVER_EMAIL: ${CERTSOLVER_EMAIL}
-      FILEBROWSER_URL: ${FILEBROWSER_URL}
-      PHP_URL: ${PHP_URL}
-      DASH_URL: ${DASH_URL}
       PORTAINER_URL: ${PORTAINER_URL}
-      WP_URL: ${WP_URL}
-      WP_WWW_URL: ${WP_WWW_URL}
-      ADMINER_URL: ${ADMINER_URL}
-      MAILHOG_URL: ${MAILHOG_URL}
       TZ: Australia/Sydney
     volumes:
       - /etc/localtime:/etc/localtime:ro
