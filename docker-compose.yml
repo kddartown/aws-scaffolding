@@ -1,0 +1,104 @@
+version: "3.8"
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik_proxy
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    environment:
+      TRAEFIK_URL: ${TRAEFIK_URL}
+      CERTSOLVER_EMAIL: ${CERTSOLVER_EMAIL}
+      FILEBROWSER_URL: ${FILEBROWSER_URL}
+      PHP_URL: ${PHP_URL}
+      DASH_URL: ${DASH_URL}
+      PORTAINER_URL: ${PORTAINER_URL}
+      WP_URL: ${WP_URL}
+      WP_WWW_URL: ${WP_WWW_URL}
+      ADMINER_URL: ${ADMINER_URL}
+      MAILHOG_URL: ${MAILHOG_URL}
+      TZ: Australia/Sydney
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - /srv/docker-compose/traefik_dynamic.yml:/srv/docker-compose/traefik_dynamic.yml:ro
+      - /srv/docker-compose/ssl-encrypt/acme.json:/srv/docker-compose/ssl-encrypt/acme.json
+      - /var/log/traefik.log:/var/log/traefik.log
+      - /var/log/traefikaccess.log:/var/log/traefikaccess.log
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_URL}`)"
+
+
+  ddns-updater:
+    image: qmcgaw/ddns-updater
+    container_name: ddns-updater
+    network_mode: bridge
+    #ports:
+    #  - 8001:8001
+    volumes:
+      - ./ddns-data:/updater/data
+    environment:
+      - CONFIG=
+      - PERIOD=5m
+      - UPDATE_COOLDOWN_PERIOD=5m
+      - PUBLICIP_FETCHERS=all
+      - PUBLICIP_HTTP_PROVIDERS=all
+      - PUBLICIPV4_HTTP_PROVIDERS=all
+      - PUBLICIPV6_HTTP_PROVIDERS=all
+      - PUBLICIP_DNS_PROVIDERS=all
+      - PUBLICIP_DNS_TIMEOUT=3s
+      - HTTP_TIMEOUT=10s
+      - TZ=Australia/Sydney
+
+      # Web UI
+      - LISTENING_PORT=8001
+      - ROOT_URL=/
+
+      # Backup
+      - BACKUP_PERIOD=0 # 0 to disable
+      - BACKUP_DIRECTORY=/ddns-data
+
+      # Other
+      - LOG_LEVEL=info
+      - LOG_CALLER=hidden
+      - SHOUTRRR_ADDRESSES=
+    restart: always
+
+  portainer:
+    container_name: onedart_portainer-portainer
+    image: portainer/portainer:latest
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    #ports:
+      #- 9000:9000
+      #- 8000:8000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+      - ./ssl-encrypt/acme.json:/acme.json
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Australia/Sydney
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true
+
+volumes:
+  portainer_data:
+    external: true

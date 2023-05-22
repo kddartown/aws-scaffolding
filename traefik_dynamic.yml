@@ -1,0 +1,65 @@
+http:
+    routers:
+        dashboard:
+            rule: 
+                "Host(`{{env "TRAEFIK_URL"}}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
+            tls:
+                certResolver: letsencrypt
+            entryPoints:
+                websecure
+            service:
+                api@internal
+            middlewares:
+                - "frontend-auth@file"
+                - "admin-allow"
+                - "rate-limiter"
+        portainer:
+            rule: 
+                "Host(`{{env "PORTAINER_URL"}}`)"
+            tls:
+                certResolver: letsencrypt
+            entryPoints:
+                websecure
+            service: "portainer@docker"
+            middlewares:
+                - "admin-allow"
+                - "rate-limiter"
+    middlewares:
+
+        admin-allow:
+            ipWhitelist:
+                sourceRange:
+                - "103.35.83.186/32"
+                - "137.92.65.60"
+                - "38.242.10.126"
+                - "124.150.65.90"
+                - "141.168.81.192"
+        
+        rate-limiter:
+            rateLimit:
+                burst: 20
+
+        frontend-auth:
+            basicAuth:
+                removeHeader: true
+                users:
+                    "dartuser:$apr1$fy0id5a8$f7M05755fR0.f2l4xCVa0/"
+        redirecthttps:
+            redirectScheme:
+                scheme: "https"
+                permanent: true
+    
+        default-headers:
+            headers:
+                frameDeny: true
+                sslRedirect: true
+                browserXssFilter: true
+                contentTypeNosniff: true
+                forceSTSHeader: true
+                stsIncludeSubdomains: true
+                stsPreload: true
+
+        secured:
+            chain:
+                middlewares:
+                - default-headers
