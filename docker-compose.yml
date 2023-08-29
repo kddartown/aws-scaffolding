@@ -21,7 +21,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yml:/traefik.yml:ro
-      - /srv/docker-compose/traefik_dynamic.yml:/srv/docker-compose/traefik_dynamic.yml:ro
+      - /srv/docker-compose/traefik_config:/srv/docker-compose/traefik_config:ro
       - /srv/docker-compose/ssl-encrypt/acme.json:/srv/docker-compose/ssl-encrypt/acme.json
       - /var/log/traefik.log:/var/log/traefik.log
       - /var/log/traefikaccess.log:/var/log/traefikaccess.log
