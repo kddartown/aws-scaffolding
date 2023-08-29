@@ -29,11 +29,7 @@ http:
         admin-allow:
             ipWhitelist:
                 sourceRange:
-                - "103.35.83.186/32"
-                - "137.92.65.60/30"
-                - "38.242.10.126/32"
-                - "124.150.65.90/32"
-                - "141.168.81.192/32"
+                - "fill.me.in.0"
         
         rate-limiter:
             rateLimit:
