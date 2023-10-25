@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  ddns-updater:
+    container_name: ddns-updater
+    image: qmcgaw/ddns-updater
+    profiles:
+      - "ddns"
+      - "all"
+    restart: always
+    env_file:
+      - ./env/timezone.env
+    environment:
+      - CONFIG=
+      - PERIOD=5m
+      - UPDATE_COOLDOWN_PERIOD=5m
+      - PUBLICIP_FETCHERS=all
+      - PUBLICIP_HTTP_PROVIDERS=all
+      - PUBLICIPV4_HTTP_PROVIDERS=all
+      - PUBLICIPV6_HTTP_PROVIDERS=all
+      - PUBLICIP_DNS_PROVIDERS=all
+      - PUBLICIP_DNS_TIMEOUT=3s
+      - HTTP_TIMEOUT=10s
+
+      # Web UI
+      - LISTENING_PORT=8001
+      - ROOT_URL=/
+
+      # Backup
+      - BACKUP_PERIOD=0 # 0 to disable
+      - BACKUP_DIRECTORY=/ddns-data
+
+      # Other
+      - LOG_LEVEL=info
+      - LOG_CALLER=hidden
+      - SHOUTRRR_ADDRESSES=
+    deploy:
+      resources:
+          limits:
+            cpus: '1'
+            memory: 512M
+          reservations:
+            cpus: '0.25'
+            memory: 64M
+    volumes:
+      - ../ddns-data:/updater/data
+    network_mode: bridge

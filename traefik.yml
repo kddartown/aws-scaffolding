@@ -36,7 +36,7 @@ providers:
     exposedByDefault: false
     network: traefik_proxy
   file:
-    directory: "/srv/docker-compose/traefik_config"
+    directory: "/etc/traefik"
     watch:
       true
 
@@ -44,7 +44,7 @@ certificatesResolvers:
   letsencrypt:
     acme:
       email: 'isaccounts@diversityarrays.com'
-      storage: /srv/docker-compose/ssl-encrypt/acme.json
+      storage: /acme.json
       keyType: EC384
       httpChallenge:
         entryPoint: web

@@ -1,15 +1,13 @@
 http:
     routers:
-        dashboard:
+        dozzle:
             rule: 
-                "Host(`{{env "TRAEFIK_URL"}}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
+                "Host(`{{env "DOZZLE_URL"}}`)"
             tls:
                 certResolver: letsencrypt
             entryPoints:
                 websecure
-            service:
-                api@internal
+            service: "dozzle@docker"
             middlewares:
-                - "frontend-auth@file"
                 - "admin-allow@file"
                 - "rate-limiter@file"

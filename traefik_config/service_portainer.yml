@@ -1,15 +1,13 @@
 http:
     routers:
-        dashboard:
+        portainer:
             rule: 
-                "Host(`{{env "TRAEFIK_URL"}}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api`))"
+                "Host(`{{env "PORTAINER_URL"}}`)"
             tls:
                 certResolver: letsencrypt
             entryPoints:
                 websecure
-            service:
-                api@internal
+            service: "portainer@docker"
             middlewares:
-                - "frontend-auth@file"
                 - "admin-allow@file"
                 - "rate-limiter@file"

@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    profiles:
+      - "monitoring"
+      - "all"
+    env_file:
+      - ./env/timezone.env
+    deploy:
+      resources:
+          limits:
+            cpus: '0.25'
+            memory: 128M
+          reservations:
+            cpus: '0.1'
+            memory: 64M
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+
+networks:
+  traefik_proxy:
+    external: true
