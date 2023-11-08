@@ -1,34 +1,35 @@
-middlewares:
-        admin-allow:
-            ipWhitelist:
-                sourceRange:
-                - "fill.me.in.0"
+http:
+        middlewares:
+                admin-allow:
+                    ipWhitelist:
+                        sourceRange:
+                        - "fill.me.in.0"
+                
+                rate-limiter:
+                    rateLimit:
+                        burst: 20
         
-        rate-limiter:
-            rateLimit:
-                burst: 20
-
-        frontend-auth:
-            basicAuth:
-                removeHeader: true
-                users:
-                    "dartuser:$apr1$fy0id5a8$f7M05755fR0.f2l4xCVa0/"
-        redirecthttps:
-            redirectScheme:
-                scheme: "https"
-                permanent: true
-    
-        default-headers:
-            headers:
-                frameDeny: true
-                sslRedirect: true
-                browserXssFilter: true
-                contentTypeNosniff: true
-                forceSTSHeader: true
-                stsIncludeSubdomains: true
-                stsPreload: true
-
-        secured:
-            chain:
-                middlewares:
-                - default-headers
+                frontend-auth:
+                    basicAuth:
+                        removeHeader: true
+                        users:
+                            "dartuser:$apr1$fy0id5a8$f7M05755fR0.f2l4xCVa0/"
+                redirecthttps:
+                    redirectScheme:
+                        scheme: "https"
+                        permanent: true
+            
+                default-headers:
+                    headers:
+                        frameDeny: true
+                        sslRedirect: true
+                        browserXssFilter: true
+                        contentTypeNosniff: true
+                        forceSTSHeader: true
+                        stsIncludeSubdomains: true
+                        stsPreload: true
+        
+                secured:
+                    chain:
+                        middlewares:
+                        - default-headers
